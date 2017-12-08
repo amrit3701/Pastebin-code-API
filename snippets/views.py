@@ -20,7 +20,7 @@ from rest_framework import renderers
 
 
 class SnippetList(generics.ListCreateAPIView):
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticated,)#OrReadOnly, IsOwnerOrReadOnly,)
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
 
@@ -28,17 +28,19 @@ class SnippetList(generics.ListCreateAPIView):
         serializer.save(owner=self.request.user)
 
 class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticated,)#OrReadOnly, IsOwnerOrReadOnly,)
 
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
 
 class UserList(generics.ListAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
 class UserDetail(generics.RetrieveAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -52,6 +54,7 @@ def api_root(request, format=None):
 
 
 class SnippetHighlight(generics.GenericAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
     queryset = Snippet.objects.all()
     renderer_classes = (renderers.StaticHTMLRenderer,)
 
