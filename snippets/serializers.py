@@ -19,3 +19,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ('url', 'id', 'username', 'snippets')
+
+import ipdb
+
+class GlobalSearchSerializer(serializers.ModelSerializer):
+
+   class Meta:
+      model = Snippet
+      fields = ['url', 'id']#"__all__"#('id')

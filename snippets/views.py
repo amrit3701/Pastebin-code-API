@@ -18,11 +18,13 @@ from snippets.permissions import IsOwnerOrReadOnly
 from rest_framework.reverse import reverse
 from rest_framework import renderers
 
+from snippets.serializers import GlobalSearchSerializer
 
 class SnippetList(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)#OrReadOnly, IsOwnerOrReadOnly,)
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
+    filter_fields = ('language', 'code')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -61,3 +63,13 @@ class SnippetHighlight(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         snippet = self.get_object()
         return Response(snippet.highlighted)
+
+from django.db.models import Q
+from itertools import chain
+
+class GlobalSearchList(generics.ListAPIView):
+   serializer_class = GlobalSearchSerializer
+
+   def get_queryset(self):
+      query = self.request.query_params.get('id', None)
+      return Snippet.objects.filter(owner__username=query)#all_results
