@@ -12,7 +12,7 @@ from snippets.serializers import SnippetSerializer
 from rest_framework import generics
 
 from rest_framework import permissions
-from snippets.permissions import AllowOnlyAnonymous, AllowOnlyOwnProfile
+from snippets.permissions import AllowOnlyAnonymous, AllowOnlyOwnProfile, AllowToEditOwnSnippets
 
 from rest_framework.reverse import reverse
 from rest_framework import renderers
@@ -25,7 +25,7 @@ from rest_framework.views import APIView
 
 
 class SnippetList(generics.ListCreateAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
     filter_fields = ('language', 'code')
@@ -34,7 +34,7 @@ class SnippetList(generics.ListCreateAPIView):
         serializer.save(owner=self.request.user)
 
 class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (AllowToEditOwnSnippets,)
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
 
@@ -77,7 +77,7 @@ def api_root(request, format=None):
 
 
 class SnippetHighlight(generics.GenericAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
     queryset = Snippet.objects.all()
     renderer_classes = (renderers.StaticHTMLRenderer,)
 
